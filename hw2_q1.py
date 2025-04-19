@@ -36,12 +36,20 @@ def english_to_morse(
         Name of output file containing the translated Morse code. Please don't change
         it since it's also hard-coded in the tests file.
     """
-    with open (input_file, 'r') as f:
-        text = f.read()
-    words = text.split()
-    def morse_to_upper (char):
-        return MORSE_CODE.get(char.upper(), '')
-    morse_code = [' '.join(map(morse_to_upper, word)) for word in words]
-    with open (output_file, 'w') as f:
-        f.write ('\n'.join(morse_code))
-english_to_morse('lorem.txt', 'lorem_morse.txt')
+    with open(input_file, 'r') as infile:
+        text = infile.read()
+
+    morse_text = '\n'.join([
+        '\n'.join([
+            ''.join(map(lambda char: MORSE_CODE.get(char.upper(), ''), word)) 
+            for word in line.split()
+        ]) if line else ''  # Preserve empty lines
+        for line in text.split('\n')
+    ])
+
+    with open(output_file, 'w') as outfile:
+        outfile.write(morse_text)
+if __name__ == '__main__':
+    # Question 1
+    return_value = english_to_morse("lorem.txt", "lorem_morse.txt")
+    print(f"Question 1 solution: {return_value}")
