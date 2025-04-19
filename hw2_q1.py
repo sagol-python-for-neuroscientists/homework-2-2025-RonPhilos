@@ -17,7 +17,6 @@ MORSE_CODE = {'A': '.-',     'B': '-...',   'C': '-.-.',
               "'": '.----.', '-': '-....-',
               }
 
-
 def english_to_morse(
     input_file: str = "lorem.txt",
     output_file: str = "lorem_morse.txt"
@@ -37,3 +36,12 @@ def english_to_morse(
         Name of output file containing the translated Morse code. Please don't change
         it since it's also hard-coded in the tests file.
     """
+    with open (input_file, 'r') as f:
+        text = f.read()
+    words = text.split()
+    def morse_to_upper (char):
+        return MORSE_CODE.get(char.upper(), '')
+    morse_code = [' '.join(map(morse_to_upper, word)) for word in words]
+    with open (output_file, 'w') as f:
+        f.write ('\n'.join(morse_code))
+english_to_morse('lorem.txt', 'lorem_morse.txt')
