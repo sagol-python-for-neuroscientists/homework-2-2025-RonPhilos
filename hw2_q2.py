@@ -33,38 +33,32 @@ def meetup(agent_listing: tuple) -> list:
         if agent1 is None or agent2 is None:
             return [a for a in (agent1, agent2) if a]
         a, b = agent1, agent2
+        a_cat, b_cat = a.category, b.category
     #positive meetings#
-        if a.category == Condition.CURE:
-            if b.category == Condition.SICK:
+        if a_cat == Condition.CURE:
+            if b_cat == Condition.SICK:
                 b = b._replace(category=Condition.HEALTHY)
-            elif b.category == Condition.DYING:
+            elif b_cat == Condition.DYING:
                 b = b._replace(category=Condition.SICK)
-        if b.category == Condition.CURE:
-            if a.category == Condition.SICK:
+        if b_cat == Condition.CURE:
+            if a_cat == Condition.SICK:
                 a = a._replace(category=Condition.HEALTHY)
-            elif a.category == Condition.DYING:
+            elif a_cat == Condition.DYING:
                 a = a._replace(category=Condition.SICK)
     #negative meetings#
-        if a.category == Condition.SICK:
-            if b.category == Condition.SICK:
-                b = b._replace(category=Condition.DYING)
-            elif b.category == Condition.DYING:
-                b = b._replace(category=Condition.DEAD)
-        if a.category == Condition.DYING:
-            if b.category == Condition.SICK:
-                b = b._replace(category=Condition.DYING)
-            elif b.category == Condition.DYING:
-                b = b._replace(category=Condition.DEAD)
-        if b.category == Condition.SICK:
-            if a.category == Condition.SICK:
+        if a_cat == Condition.SICK and b_cat ==Condition.SICK:
                 a = a._replace(category=Condition.DYING)
-            elif a.category == Condition.DYING:
-                a = a._replace(category=Condition.DEAD)
-        if b.category == Condition.DYING:
-            if a.category == Condition.SICK:
+                b = b._replace(category=Condition.DYING)
+        elif a_cat == Condition.SICK and b_cat ==Condition.DYING:
                 a = a._replace(category=Condition.DYING)
-            elif a.category == Condition.DYING:
+                b = b._replace(category=Condition.DEAD)
+        elif a_cat == Condition.DYING and b_cat ==Condition.SICK:
                 a = a._replace(category=Condition.DEAD)
+                b = b._replace(category=Condition.DYING)
+        elif a_cat == Condition.DYING and b_cat ==Condition.DYING:
+                a = a._replace(category=Condition.DEAD)
+                b = b._replace(category=Condition.DEAD)
+
         return [a,b]
     
     meeting_agents = [agent for agent in agent_listing if agent.category not in (Condition.HEALTHY, Condition.DEAD)]
