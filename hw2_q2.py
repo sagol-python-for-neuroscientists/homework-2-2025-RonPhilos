@@ -29,3 +29,56 @@ def meetup(agent_listing: tuple) -> list:
         A list of Agents with their 'category' field changed according to the result
         of the meeting.
     """
+    def pairs (agent1, agent2):
+        if agent1 is None or agent2 is None:
+            return [a for a in (agent1, agent2) if a]
+        a, b = agent1, agent2
+    #positive meetings#
+        if a.category == Condition.CURE:
+            if b.category == Condition.SICK:
+                b = b._replace(category=Condition.HEALTHY)
+            elif b.category == Condition.DYING:
+                b = b._replace(category=Condition.SICK)
+        if b.category == Condition.CURE:
+            if a.category == Condition.SICK:
+                a = a._replace(category=Condition.HEALTHY)
+            elif a.category == Condition.DYING:
+                a = a._replace(category=Condition.SICK)
+    #negative meetings#
+        if a.category == Condition.SICK:
+            if b.category == Condition.SICK:
+                b = b._replace(category=Condition.DYING)
+            elif b.category == Condition.DYING:
+                b = b._replace(category=Condition.DEAD)
+        if a.category == Condition.DYING:
+            if b.category == Condition.SICK:
+                b = b._replace(category=Condition.DYING)
+            elif b.category == Condition.DYING:
+                b = b._replace(category=Condition.DEAD)
+        if b.category == Condition.SICK:
+            if a.category == Condition.SICK:
+                a = a._replace(category=Condition.DYING)
+            elif a.category == Condition.DYING:
+                a = a._replace(category=Condition.DEAD)
+        if b.category == Condition.DYING:
+            if a.category == Condition.SICK:
+                a = a._replace(category=Condition.DYING)
+            elif a.category == Condition.DYING:
+                a = a._replace(category=Condition.DEAD)
+        return [a,b]
+    
+    meeting_agents = [agent for agent in agent_listing if agent.category not in (Condition.HEALTHY, Condition.DEAD)]
+    updated = []
+    i = 0
+    while i < len(meeting_agents):
+        agent1 = meeting_agents[i]
+        if i + 1 < len(meeting_agents):
+            agent2 = meeting_agents[i + 1]
+            updated.extend(pairs(agent1, agent2))
+            i += 2
+        else:
+            updated.append(agent1)
+            i += 1
+
+    untouched = [agent for agent in agent_listing if agent.category in (Condition.HEALTHY, Condition.DEAD)]
+    return updated + untouched
